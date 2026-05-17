@@ -1,0 +1,33 @@
+version: 2
+
+models:
+  - name: fact_ball_events
+    description: Incremental fact table for ball-by-ball events
+    columns:
+      - name: ball_id
+        tests:
+          - not_null
+      - name: match_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_match')
+              field: match_id
+
+  - name: fact_match_summary
+    description: Incremental match summary fact table with phase-level statistics
+    columns:
+      - name: match_id
+        tests:
+          - not_null
+          - unique
+
+  - name: fact_player_performance
+    description: Player performance per match with batting, bowling, and fantasy stats
+    columns:
+      - name: match_id
+        tests:
+          - not_null
+      - name: player_name
+        tests:
+          - not_null

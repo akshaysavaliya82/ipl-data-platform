@@ -1,0 +1,75 @@
+[tool.poetry]
+name = "ipl-data-platform"
+version = "1.0.0"
+description = "IPL Real-Time Analytics Lakehouse Platform"
+authors = ["Akshay Savaliya"]
+readme = "README.md"
+packages = [
+    { include = "ingestion" },
+    { include = "kafka" },
+    { include = "spark_jobs" },
+    { include = "api" },
+    { include = "dashboard" },
+    { include = "data_quality" },
+    { include = "monitoring" },
+    { include = "config" },
+]
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pyspark = "^3.5.0"
+kafka-python = "^2.0.2"
+confluent-kafka = "^2.3.0"
+apache-airflow = "^2.8.0"
+fastapi = "^0.110.0"
+uvicorn = "^0.27.0"
+streamlit = "^1.31.0"
+sqlalchemy = "^2.0.0"
+psycopg2-binary = "^2.9.9"
+pydantic = "^2.6.0"
+pydantic-settings = "^2.1.0"
+delta-spark = "^3.1.0"
+pandas = "^2.2.0"
+numpy = "^1.26.0"
+plotly = "^5.18.0"
+altair = "^5.2.0"
+great-expectations = "^0.18.0"
+requests = "^2.31.0"
+python-dotenv = "^1.0.0"
+structlog = "^24.1.0"
+prometheus-client = "^0.20.0"
+httpx = "^0.27.0"
+tenacity = "^8.2.0"
+click = "^8.1.0"
+pyyaml = "^6.0.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.0.0"
+pytest-cov = "^4.1.0"
+pytest-asyncio = "^0.23.0"
+ruff = "^0.3.0"
+mypy = "^1.8.0"
+black = "^24.2.0"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "W", "UP"]
+ignore = ["N812"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = false
+warn_return_any = true
+warn_unused_configs = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_functions = ["test_*"]
