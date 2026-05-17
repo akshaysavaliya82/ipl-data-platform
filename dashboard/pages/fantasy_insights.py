@@ -19,11 +19,13 @@ def render_fantasy_insights() -> None:
         st.warning("No data available.")
         return
 
-    tab1, tab2, tab3 = st.tabs([
-        "Fantasy Score Calculator",
-        "Dream Team Builder",
-        "Impact Players",
-    ])
+    tab1, tab2, tab3 = st.tabs(
+        [
+            "Fantasy Score Calculator",
+            "Dream Team Builder",
+            "Impact Players",
+        ]
+    )
 
     with tab1:
         _render_fantasy_calculator()
@@ -59,8 +61,13 @@ def _render_fantasy_calculator() -> None:
         from spark_jobs.gold.win_probability import calculate_fantasy_score
 
         result = calculate_fantasy_score(
-            runs=runs, balls_faced=balls, fours=fours, sixes=sixes,
-            wickets=wickets, overs_bowled=overs, runs_conceded=runs_conceded,
+            runs=runs,
+            balls_faced=balls,
+            fours=fours,
+            sixes=sixes,
+            wickets=wickets,
+            overs_bowled=overs,
+            runs_conceded=runs_conceded,
             catches=catches,
         )
 
@@ -70,16 +77,20 @@ def _render_fantasy_calculator() -> None:
         col3.metric("Bowling", result["bowling_points"])
         col4.metric("Fielding", result["fielding_points"])
 
-        fig = go.Figure(data=[go.Pie(
-            labels=["Batting", "Bowling", "Fielding"],
-            values=[
-                max(0, result["batting_points"]),
-                max(0, result["bowling_points"]),
-                max(0, result["fielding_points"]),
-            ],
-            hole=0.4,
-            marker_colors=["#1E88E5", "#43A047", "#FB8C00"],
-        )])
+        fig = go.Figure(
+            data=[
+                go.Pie(
+                    labels=["Batting", "Bowling", "Fielding"],
+                    values=[
+                        max(0, result["batting_points"]),
+                        max(0, result["bowling_points"]),
+                        max(0, result["fielding_points"]),
+                    ],
+                    hole=0.4,
+                    marker_colors=["#1E88E5", "#43A047", "#FB8C00"],
+                )
+            ]
+        )
         fig.update_layout(title="Points Breakdown", template="plotly_dark", height=300)
         st.plotly_chart(fig, use_container_width=True)
 
@@ -101,9 +112,7 @@ def _render_dream_team(df: pd.DataFrame) -> None:
     )
     batting_stats["strike_rate"] = (batting_stats["runs"] / batting_stats["balls"] * 100).round(2)
     batting_stats["impact_score"] = (
-        batting_stats["runs"] * 1.0
-        + batting_stats["fours"] * 1.0
-        + batting_stats["sixes"] * 2.0
+        batting_stats["runs"] * 1.0 + batting_stats["fours"] * 1.0 + batting_stats["sixes"] * 2.0
     ) / batting_stats["matches"]
 
     bowling_stats = (
@@ -163,8 +172,12 @@ def _render_impact_players(df: pd.DataFrame) -> None:
     impact = impact[impact["balls"] >= 20].sort_values("strike_rate", ascending=False).head(15)
 
     fig = px.scatter(
-        impact, x="strike_rate", y="boundary_pct",
-        size="runs", text="batsman", color="runs",
+        impact,
+        x="strike_rate",
+        y="boundary_pct",
+        size="runs",
+        text="batsman",
+        color="runs",
         title=f"Impact Players - {phase.title()} Phase",
         color_continuous_scale="Viridis",
         labels={"strike_rate": "Strike Rate", "boundary_pct": "Boundary %"},

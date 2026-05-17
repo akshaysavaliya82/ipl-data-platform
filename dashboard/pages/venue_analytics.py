@@ -68,12 +68,16 @@ def _render_venue_detail(df, venue: str) -> None:
     col1, col2 = st.columns(2)
 
     with col1:
-        fig = go.Figure(data=[go.Pie(
-            labels=["Bat First Wins", "Chase Wins"],
-            values=[bat_first_wins, chase_wins],
-            hole=0.4,
-            marker_colors=["#FF9800", "#2196F3"],
-        )])
+        fig = go.Figure(
+            data=[
+                go.Pie(
+                    labels=["Bat First Wins", "Chase Wins"],
+                    values=[bat_first_wins, chase_wins],
+                    hole=0.4,
+                    marker_colors=["#FF9800", "#2196F3"],
+                )
+            ]
+        )
         fig.update_layout(title="Bat First vs Chase", template="plotly_dark", height=350)
         st.plotly_chart(fig, use_container_width=True)
 
@@ -81,32 +85,45 @@ def _render_venue_detail(df, venue: str) -> None:
         toss_stats = venue_df.copy()
         toss_stats["toss_won_match"] = toss_stats["toss_winner"] == toss_stats["winner"]
         toss_decision_stats = (
-            toss_stats.groupby("toss_decision")["toss_won_match"]
-            .mean()
-            .reset_index()
+            toss_stats.groupby("toss_decision")["toss_won_match"].mean().reset_index()
         )
         toss_decision_stats.columns = ["Decision", "Win Rate"]
         toss_decision_stats["Win Rate"] = (toss_decision_stats["Win Rate"] * 100).round(1)
 
-        fig = px.bar(toss_decision_stats, x="Decision", y="Win Rate",
-                     title="Toss Decision Impact",
-                     color="Decision", text="Win Rate")
+        fig = px.bar(
+            toss_decision_stats,
+            x="Decision",
+            y="Win Rate",
+            title="Toss Decision Impact",
+            color="Decision",
+            text="Win Rate",
+        )
         fig.update_traces(texttemplate="%{text:.1f}%", textposition="outside")
         fig.update_layout(template="plotly_dark", height=350, yaxis_range=[0, 100])
         st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("Score Distribution")
     fig = go.Figure()
-    fig.add_trace(go.Histogram(x=venue_df["innings1_runs"], name="1st Innings",
-                                marker_color="#FF9800", opacity=0.7))
-    fig.add_trace(go.Histogram(x=venue_df["innings2_runs"], name="2nd Innings",
-                                marker_color="#2196F3", opacity=0.7))
-    fig.update_layout(title="Score Distribution", template="plotly_dark",
-                      height=350, barmode="overlay")
+    fig.add_trace(
+        go.Histogram(
+            x=venue_df["innings1_runs"], name="1st Innings", marker_color="#FF9800", opacity=0.7
+        )
+    )
+    fig.add_trace(
+        go.Histogram(
+            x=venue_df["innings2_runs"], name="2nd Innings", marker_color="#2196F3", opacity=0.7
+        )
+    )
+    fig.update_layout(
+        title="Score Distribution", template="plotly_dark", height=350, barmode="overlay"
+    )
     st.plotly_chart(fig, use_container_width=True)
 
     st.subheader("Recent Matches at Venue")
     recent = venue_df.sort_values("date", ascending=False).head(10)
-    display_cols = [c for c in ["date", "team1", "team2", "winner", "margin", "player_of_match"]
-                    if c in recent.columns]
+    display_cols = [
+        c
+        for c in ["date", "team1", "team2", "winner", "margin", "player_of_match"]
+        if c in recent.columns
+    ]
     st.dataframe(recent[display_cols], use_container_width=True, hide_index=True)

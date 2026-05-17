@@ -15,8 +15,7 @@ def create_spark_session(
 ) -> SparkSession:
     """Create a configured Spark session."""
     builder = (
-        SparkSession.builder
-        .appName(app_name)
+        SparkSession.builder.appName(app_name)
         .master(master)
         .config("spark.sql.session.timeZone", "UTC")
         .config("spark.sql.parquet.compression.codec", "snappy")
@@ -27,11 +26,11 @@ def create_spark_session(
 
     if enable_delta:
         builder = (
-            builder
-            .config("spark.jars.packages", "io.delta:delta-spark_2.12:3.1.0")
+            builder.config("spark.jars.packages", "io.delta:delta-spark_2.12:3.1.0")
             .config("spark.sql.extensions", "io.delta.sql.DeltaSparkSessionExtension")
-            .config("spark.sql.catalog.spark_catalog",
-                    "org.apache.spark.sql.delta.catalog.DeltaCatalog")
+            .config(
+                "spark.sql.catalog.spark_catalog", "org.apache.spark.sql.delta.catalog.DeltaCatalog"
+            )
         )
 
     if extra_config:

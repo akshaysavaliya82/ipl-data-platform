@@ -13,9 +13,13 @@ logger = get_logger(__name__)
 class ValidationResult:
     """Result of a data quality check."""
 
-    def __init__(self, check_name: str, passed: bool,
-                 details: dict[str, Any] | None = None,
-                 failures: list[str] | None = None):
+    def __init__(
+        self,
+        check_name: str,
+        passed: bool,
+        details: dict[str, Any] | None = None,
+        failures: list[str] | None = None,
+    ):
         self.check_name = check_name
         self.passed = passed
         self.details = details or {}
@@ -55,8 +59,15 @@ class DataValidator:
         checks = {
             "matches": {
                 "file": "samples/matches.json",
-                "required_fields": ["match_id", "season", "team1", "team2",
-                                     "winner", "venue", "date"],
+                "required_fields": [
+                    "match_id",
+                    "season",
+                    "team1",
+                    "team2",
+                    "winner",
+                    "venue",
+                    "date",
+                ],
             },
             "players": {
                 "file": "samples/players.json",
@@ -64,8 +75,15 @@ class DataValidator:
             },
             "ball_events": {
                 "file": "samples/ball_by_ball.json",
-                "required_fields": ["match_id", "innings", "over", "ball",
-                                     "batsman", "bowler", "runs_scored"],
+                "required_fields": [
+                    "match_id",
+                    "innings",
+                    "over",
+                    "ball",
+                    "batsman",
+                    "bowler",
+                    "runs_scored",
+                ],
             },
         }
 
@@ -82,8 +100,9 @@ class DataValidator:
 
             null_counts: dict[str, int] = {}
             for field in config["required_fields"]:
-                nulls = sum(1 for record in data
-                           if record.get(field) is None or record.get(field) == "")
+                nulls = sum(
+                    1 for record in data if record.get(field) is None or record.get(field) == ""
+                )
                 if nulls > 0:
                     null_counts[field] = nulls
                     failures.append(
@@ -104,8 +123,7 @@ class DataValidator:
             failures=failures,
         )
         self.results.append(result)
-        logger.info("null_check_completed", passed=result.passed,
-                     failure_count=len(failures))
+        logger.info("null_check_completed", passed=result.passed, failure_count=len(failures))
         return result.to_dict()
 
     def check_duplicates(self, data_path: str = "data") -> dict[str, Any]:
@@ -138,9 +156,7 @@ class DataValidator:
             duplicates = len(ids) - len(unique_ids)
 
             if duplicates > 0:
-                failures.append(
-                    f"{dataset_name}: {duplicates} duplicate {key_field} values"
-                )
+                failures.append(f"{dataset_name}: {duplicates} duplicate {key_field} values")
 
             details[dataset_name] = {
                 "total_records": len(data),
@@ -164,9 +180,18 @@ class DataValidator:
             "matches": {
                 "file": "samples/matches.json",
                 "expected_fields": [
-                    "match_id", "season", "date", "venue", "city",
-                    "team1", "team2", "winner", "toss_winner",
-                    "toss_decision", "innings1_runs", "innings2_runs",
+                    "match_id",
+                    "season",
+                    "date",
+                    "venue",
+                    "city",
+                    "team1",
+                    "team2",
+                    "winner",
+                    "toss_winner",
+                    "toss_decision",
+                    "innings1_runs",
+                    "innings2_runs",
                 ],
                 "field_types": {
                     "season": (int, float),
@@ -177,8 +202,12 @@ class DataValidator:
             "players": {
                 "file": "samples/players.json",
                 "expected_fields": [
-                    "player_id", "player_name", "nationality",
-                    "batting_style", "bowling_style", "role",
+                    "player_id",
+                    "player_name",
+                    "nationality",
+                    "batting_style",
+                    "bowling_style",
+                    "role",
                 ],
                 "field_types": {},
             },
@@ -212,9 +241,7 @@ class DataValidator:
                             )
 
             if missing_fields:
-                failures.append(
-                    f"{dataset_name}: missing fields: {missing_fields}"
-                )
+                failures.append(f"{dataset_name}: missing fields: {missing_fields}")
             if type_errors:
                 failures.extend(type_errors[:5])
 
@@ -235,8 +262,7 @@ class DataValidator:
         logger.info("schema_check_completed", passed=result.passed)
         return result.to_dict()
 
-    def check_freshness(self, data_path: str = "data",
-                        max_age_hours: int = 48) -> dict[str, Any]:
+    def check_freshness(self, data_path: str = "data", max_age_hours: int = 48) -> dict[str, Any]:
         """Check data freshness based on file modification times."""
         files_to_check = [
             "samples/matches.json",
@@ -257,9 +283,7 @@ class DataValidator:
                 details[file_path] = {"exists": False}
                 continue
 
-            mod_time = datetime.fromtimestamp(
-                full_path.stat().st_mtime, tz=UTC
-            )
+            mod_time = datetime.fromtimestamp(full_path.stat().st_mtime, tz=UTC)
             age_hours = (now - mod_time).total_seconds() / 3600
 
             details[file_path] = {
@@ -271,8 +295,7 @@ class DataValidator:
 
             if age_hours > max_age_hours:
                 failures.append(
-                    f"{file_path}: data is {age_hours:.1f}h old "
-                    f"(max: {max_age_hours}h)"
+                    f"{file_path}: data is {age_hours:.1f}h old (max: {max_age_hours}h)"
                 )
 
         result = ValidationResult(
@@ -343,8 +366,12 @@ class DataValidator:
         with open(report_file, "w") as f:
             json.dump(summary, f, indent=2)
 
-        logger.info("all_dq_checks_completed", passed=all_passed,
-                     total_failures=total_failures, report=str(report_file))
+        logger.info(
+            "all_dq_checks_completed",
+            passed=all_passed,
+            total_failures=total_failures,
+            report=str(report_file),
+        )
         return summary
 
 

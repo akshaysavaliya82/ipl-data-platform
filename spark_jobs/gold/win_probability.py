@@ -20,11 +20,13 @@ def calculate_win_probability(
     """
     if not is_chasing:
         projected_total = _project_first_innings_total(
-            current_score, wickets_fallen, overs_completed,
+            current_score,
+            wickets_fallen,
+            overs_completed,
         )
-        batting_win_prob = min(0.95, max(0.05,
-            0.5 + (projected_total - 165) * 0.008 - wickets_fallen * 0.03
-        ))
+        batting_win_prob = min(
+            0.95, max(0.05, 0.5 + (projected_total - 165) * 0.008 - wickets_fallen * 0.03)
+        )
         return {
             "batting_team_win_probability": round(batting_win_prob, 4),
             "bowling_team_win_probability": round(1 - batting_win_prob, 4),
@@ -68,9 +70,7 @@ def calculate_win_probability(
     }
 
 
-def _project_first_innings_total(
-    current_score: int, wickets: int, overs: float
-) -> float:
+def _project_first_innings_total(current_score: int, wickets: int, overs: float) -> float:
     """Project first innings total based on current score and resources."""
     if overs <= 0:
         return 165.0
@@ -93,9 +93,15 @@ def _project_first_innings_total(
 
 
 def calculate_fantasy_score(
-    runs: int, balls_faced: int, fours: int, sixes: int,
-    wickets: int, overs_bowled: float, runs_conceded: int,
-    catches: int = 0, run_outs: int = 0,
+    runs: int,
+    balls_faced: int,
+    fours: int,
+    sixes: int,
+    wickets: int,
+    overs_bowled: float,
+    runs_conceded: int,
+    catches: int = 0,
+    run_outs: int = 0,
 ) -> dict[str, float]:
     """Calculate fantasy cricket score for a player."""
     batting_points = (
@@ -120,11 +126,7 @@ def calculate_fantasy_score(
         elif strike_rate < 70 and balls_faced >= 10:
             batting_points -= 4
 
-    bowling_points = (
-        wickets * 25.0
-        + (25 if wickets >= 3 else 0)
-        + (50 if wickets >= 5 else 0)
-    )
+    bowling_points = wickets * 25.0 + (25 if wickets >= 3 else 0) + (50 if wickets >= 5 else 0)
 
     if overs_bowled >= 2:
         economy = runs_conceded / overs_bowled

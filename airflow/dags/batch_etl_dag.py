@@ -49,7 +49,9 @@ def run_dbt_models(**context):
 
     result = subprocess.run(
         ["dbt", "run", "--project-dir", "dbt", "--profiles-dir", "dbt"],
-        capture_output=True, text=True, check=False,
+        capture_output=True,
+        text=True,
+        check=False,
     )
     if result.returncode != 0:
         raise RuntimeError(f"dbt run failed: {result.stderr}")
@@ -62,7 +64,9 @@ def run_dbt_tests(**context):
 
     result = subprocess.run(
         ["dbt", "test", "--project-dir", "dbt", "--profiles-dir", "dbt"],
-        capture_output=True, text=True, check=False,
+        capture_output=True,
+        text=True,
+        check=False,
     )
     if result.returncode != 0:
         raise RuntimeError(f"dbt test failed: {result.stderr}")
@@ -89,7 +93,6 @@ with DAG(
     4. dbt: Run data tests
     """,
 ) as dag:
-
     start = BashOperator(
         task_id="start_etl",
         bash_command='echo "Starting Batch ETL - $(date)"',

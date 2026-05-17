@@ -14,7 +14,8 @@ st.set_page_config(
     initial_sidebar_state="expanded",
 )
 
-st.markdown("""
+st.markdown(
+    """
 <style>
     .main-header {
         font-size: 2.5rem;
@@ -36,12 +37,17 @@ st.markdown("""
         border: 1px solid #333;
     }
 </style>
-""", unsafe_allow_html=True)
+""",
+    unsafe_allow_html=True,
+)
 
-st.markdown('<div class="main-header">IPL Real-Time Analytics Lakehouse</div>',
-            unsafe_allow_html=True)
-st.markdown('<div class="sub-header">Production-Grade Data Engineering Platform</div>',
-            unsafe_allow_html=True)
+st.markdown(
+    '<div class="main-header">IPL Real-Time Analytics Lakehouse</div>', unsafe_allow_html=True
+)
+st.markdown(
+    '<div class="sub-header">Production-Grade Data Engineering Platform</div>',
+    unsafe_allow_html=True,
+)
 
 st.sidebar.title("Navigation")
 page = st.sidebar.radio(
@@ -58,21 +64,27 @@ page = st.sidebar.radio(
 
 if page == "Overview":
     from dashboard.pages.overview import render_overview
+
     render_overview()
 elif page == "Live Match":
     from dashboard.pages.live_match import render_live_match
+
     render_live_match()
 elif page == "Team Analytics":
     from dashboard.pages.team_analytics import render_team_analytics
+
     render_team_analytics()
 elif page == "Player Analytics":
     from dashboard.pages.player_analytics import render_player_analytics
+
     render_player_analytics()
 elif page == "Venue Analytics":
     from dashboard.pages.venue_analytics import render_venue_analytics
+
     render_venue_analytics()
 elif page == "Fantasy Insights":
     from dashboard.pages.fantasy_insights import render_fantasy_insights
+
     render_fantasy_insights()
 
 st.sidebar.markdown("---")

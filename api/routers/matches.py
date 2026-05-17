@@ -29,11 +29,13 @@ async def get_seasons() -> dict:
         season = match.get("season", 0)
         if season not in seasons:
             seasons[season] = {
-                "season": season, "matches": 0, "total_runs": 0,
+                "season": season,
+                "matches": 0,
+                "total_runs": 0,
             }
         seasons[season]["matches"] += 1
-        seasons[season]["total_runs"] += (
-            match.get("innings1_runs", 0) + match.get("innings2_runs", 0)
+        seasons[season]["total_runs"] += match.get("innings1_runs", 0) + match.get(
+            "innings2_runs", 0
         )
 
     season_list = sorted(seasons.values(), key=lambda x: x["season"], reverse=True)

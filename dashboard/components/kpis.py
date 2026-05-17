@@ -40,8 +40,12 @@ def render_player_kpis(balls_df: pd.DataFrame) -> None:
 
 
 def render_live_match_kpis(
-    batting_team: str, score: int, wickets: int,
-    overs: float, run_rate: float, target: int | None = None,
+    batting_team: str,
+    score: int,
+    wickets: int,
+    overs: float,
+    run_rate: float,
+    target: int | None = None,
 ) -> None:
     """Render live match KPIs."""
     col1, col2, col3, col4 = st.columns(4)

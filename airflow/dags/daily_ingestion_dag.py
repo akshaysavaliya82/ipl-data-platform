@@ -70,7 +70,6 @@ with DAG(
     3. Validate data quality
     """,
 ) as dag:
-
     start = BashOperator(
         task_id="start_pipeline",
         bash_command='echo "Starting IPL Daily Ingestion - $(date)"',

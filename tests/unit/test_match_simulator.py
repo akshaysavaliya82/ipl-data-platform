@@ -33,9 +33,19 @@ class TestMatchSimulator:
         events = sim.generate_sample_events(num_events=1)
         event = events[0]
         required_fields = [
-            "event_id", "match_id", "timestamp", "innings",
-            "over", "ball", "batsman", "bowler", "runs_scored",
-            "is_wicket", "total_runs", "total_wickets", "run_rate",
+            "event_id",
+            "match_id",
+            "timestamp",
+            "innings",
+            "over",
+            "ball",
+            "batsman",
+            "bowler",
+            "runs_scored",
+            "is_wicket",
+            "total_runs",
+            "total_wickets",
+            "run_rate",
         ]
         for field in required_fields:
             assert field in event, f"Missing field: {field}"

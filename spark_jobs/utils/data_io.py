@@ -27,8 +27,9 @@ def read_delta(spark: SparkSession, path: str) -> DataFrame:
     return spark.read.format("delta").load(path)
 
 
-def write_parquet(df: DataFrame, path: str, mode: str = "overwrite",
-                  partition_by: list[str] | None = None) -> None:
+def write_parquet(
+    df: DataFrame, path: str, mode: str = "overwrite", partition_by: list[str] | None = None
+) -> None:
     """Write DataFrame to Parquet format."""
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     writer = df.write.mode(mode)
@@ -38,9 +39,13 @@ def write_parquet(df: DataFrame, path: str, mode: str = "overwrite",
     logger.info("written_parquet", path=path, mode=mode, rows=df.count())
 
 
-def write_delta(df: DataFrame, path: str, mode: str = "overwrite",
-                partition_by: list[str] | None = None,
-                merge_schema: bool = False) -> None:
+def write_delta(
+    df: DataFrame,
+    path: str,
+    mode: str = "overwrite",
+    partition_by: list[str] | None = None,
+    merge_schema: bool = False,
+) -> None:
     """Write DataFrame to Delta Lake format."""
     Path(path).parent.mkdir(parents=True, exist_ok=True)
     writer = df.write.format("delta").mode(mode)

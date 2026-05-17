@@ -67,7 +67,6 @@ with DAG(
     2. Monitors streaming health
     """,
 ) as dag:
-
     health_check_start = PythonOperator(
         task_id="check_streaming_health_start",
         python_callable=check_streaming_health,

@@ -33,14 +33,13 @@ class BallEventProducer:
         self.score_topic = TOPICS["score_updates"].name
         self.wicket_topic = TOPICS["wicket_events"].name
         self.match_state_topic = TOPICS["match_state"].name
-        logger.info("producer_initialized", topics=[
-            self.ball_topic, self.score_topic, self.wicket_topic
-        ])
+        logger.info(
+            "producer_initialized", topics=[self.ball_topic, self.score_topic, self.wicket_topic]
+        )
 
     def _delivery_callback(self, err: Any, msg: Any) -> None:
         if err:
-            logger.error("message_delivery_failed", error=str(err),
-                         topic=msg.topic())
+            logger.error("message_delivery_failed", error=str(err), topic=msg.topic())
         else:
             kafka_messages_produced.labels(topic=msg.topic()).inc()
 
@@ -121,16 +120,16 @@ class BallEventProducer:
             time.sleep(delay / speed)
 
         self.producer.flush(timeout=30)
-        logger.info("live_match_simulation_completed",
-                     match_id=simulator.match_id, total_events=len(events))
+        logger.info(
+            "live_match_simulation_completed", match_id=simulator.match_id, total_events=len(events)
+        )
 
     def close(self) -> None:
         self.producer.flush(timeout=30)
         logger.info("producer_closed")
 
 
-def run_producer(bootstrap_servers: str = "localhost:9092",
-                 speed: float = 2.0) -> None:
+def run_producer(bootstrap_servers: str = "localhost:9092", speed: float = 2.0) -> None:
     """Run the ball event producer."""
     producer = BallEventProducer(bootstrap_servers)
     try:

@@ -15,9 +15,12 @@ logger = get_logger(__name__)
 class BronzeIngestion:
     """Ingest raw data into Bronze layer with metadata."""
 
-    def __init__(self, spark: SparkSession | None = None,
-                 raw_path: str = "data/samples",
-                 bronze_path: str = "data/bronze"):
+    def __init__(
+        self,
+        spark: SparkSession | None = None,
+        raw_path: str = "data/samples",
+        bronze_path: str = "data/bronze",
+    ):
         self.spark = spark or create_spark_session("IPL-Bronze-Ingestion")
         self.raw_path = raw_path
         self.bronze_path = bronze_path
@@ -25,13 +28,10 @@ class BronzeIngestion:
     def _add_metadata(self, df: DataFrame, source: str) -> DataFrame:
         """Add ingestion metadata columns."""
         return (
-            df
-            .withColumn("_ingestion_timestamp", F.current_timestamp())
+            df.withColumn("_ingestion_timestamp", F.current_timestamp())
             .withColumn("_source", F.lit(source))
             .withColumn("_ingestion_date", F.current_date())
-            .withColumn("_batch_id", F.lit(
-                datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
-            ))
+            .withColumn("_batch_id", F.lit(datetime.now(UTC).strftime("%Y%m%d_%H%M%S")))
         )
 
     def ingest_matches(self) -> DataFrame:

@@ -39,6 +39,7 @@ def load_from_file(data_type: str) -> Any:
     filepath = DATA_DIR / filename
     if not filepath.exists():
         from ingestion.sources.sample_data import save_sample_data
+
         save_sample_data(str(DATA_DIR))
 
     with open(filepath) as f:

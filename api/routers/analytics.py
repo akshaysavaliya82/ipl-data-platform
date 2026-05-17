@@ -70,9 +70,12 @@ async def pressure_index(
         "wicket_pressure": round(wicket_pressure * 100, 1),
         "rate_pressure": round(rate_pressure * 100, 1),
         "assessment": (
-            "extreme" if pressure_index > 80
-            else "high" if pressure_index > 60
-            else "moderate" if pressure_index > 40
+            "extreme"
+            if pressure_index > 80
+            else "high"
+            if pressure_index > 60
+            else "moderate"
+            if pressure_index > 40
             else "low"
         ),
     }

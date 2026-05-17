@@ -60,13 +60,28 @@ def render_team_analytics() -> None:
         season_stats["win_pct"] = season_stats["wins"] / season_stats["total"] * 100
 
         fig = go.Figure()
-        fig.add_trace(go.Bar(x=season_stats["season"], y=season_stats["wins"],
-                              name="Wins", marker_color="#4CAF50"))
-        fig.add_trace(go.Bar(x=season_stats["season"],
-                              y=season_stats["total"] - season_stats["wins"],
-                              name="Losses", marker_color="#F44336"))
-        fig.update_layout(title=f"{selected_team} - Season Performance",
-                          barmode="stack", template="plotly_dark", height=400)
+        fig.add_trace(
+            go.Bar(
+                x=season_stats["season"],
+                y=season_stats["wins"],
+                name="Wins",
+                marker_color="#4CAF50",
+            )
+        )
+        fig.add_trace(
+            go.Bar(
+                x=season_stats["season"],
+                y=season_stats["total"] - season_stats["wins"],
+                name="Losses",
+                marker_color="#F44336",
+            )
+        )
+        fig.update_layout(
+            title=f"{selected_team} - Season Performance",
+            barmode="stack",
+            template="plotly_dark",
+            height=400,
+        )
         st.plotly_chart(fig, use_container_width=True)
 
     with col2:
@@ -74,21 +89,25 @@ def render_team_analytics() -> None:
         toss_won_match = len(toss_data[toss_data["winner"] == selected_team])
         toss_total = len(toss_data)
 
-        fig = go.Figure(data=[go.Pie(
-            labels=["Won After Toss Win", "Lost After Toss Win"],
-            values=[toss_won_match, toss_total - toss_won_match],
-            hole=0.4,
-            marker_colors=["#4CAF50", "#F44336"],
-        )])
-        fig.update_layout(title=f"{selected_team} - Toss Impact",
-                          template="plotly_dark", height=400)
+        fig = go.Figure(
+            data=[
+                go.Pie(
+                    labels=["Won After Toss Win", "Lost After Toss Win"],
+                    values=[toss_won_match, toss_total - toss_won_match],
+                    hole=0.4,
+                    marker_colors=["#4CAF50", "#F44336"],
+                )
+            ]
+        )
+        fig.update_layout(
+            title=f"{selected_team} - Toss Impact", template="plotly_dark", height=400
+        )
         st.plotly_chart(fig, use_container_width=True)
 
     st.markdown("---")
     st.subheader("Head-to-Head Comparison")
 
-    other_team = st.selectbox("Compare with",
-                               [t for t in all_teams if t != selected_team], index=0)
+    other_team = st.selectbox("Compare with", [t for t in all_teams if t != selected_team], index=0)
 
     h2h = team_matches[
         (team_matches["team1"] == other_team) | (team_matches["team2"] == other_team)
@@ -103,6 +122,7 @@ def render_team_analytics() -> None:
 
     st.subheader("Recent Matches")
     recent = team_matches.sort_values("date", ascending=False).head(10)
-    display_cols = [c for c in ["date", "team1", "team2", "winner", "margin", "venue"]
-                    if c in recent.columns]
+    display_cols = [
+        c for c in ["date", "team1", "team2", "winner", "margin", "venue"] if c in recent.columns
+    ]
     st.dataframe(recent[display_cols], use_container_width=True, hide_index=True)

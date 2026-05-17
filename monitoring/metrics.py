@@ -4,10 +4,12 @@ from prometheus_client import Counter, Gauge, Histogram, Info
 
 # Application info
 app_info = Info("ipl_platform", "IPL Data Platform information")
-app_info.info({
-    "version": "1.0.0",
-    "app_name": "IPL Real-Time Analytics Lakehouse Platform",
-})
+app_info.info(
+    {
+        "version": "1.0.0",
+        "app_name": "IPL Real-Time Analytics Lakehouse Platform",
+    }
+)
 
 # Ingestion metrics
 records_ingested = Counter(

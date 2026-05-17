@@ -105,7 +105,7 @@ jobs:
 
       - name: Install Airflow
         run: |
-          pip install apache-airflow==2.8.1
+          pip install "apache-airflow>=2.9,<3"
           pip install structlog pydantic pydantic-settings pyyaml
 
       - name: Validate DAG syntax

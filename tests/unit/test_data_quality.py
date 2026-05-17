@@ -18,7 +18,8 @@ class TestValidationResult:
 
     def test_failed_result(self) -> None:
         result = ValidationResult(
-            check_name="test", passed=False,
+            check_name="test",
+            passed=False,
             failures=["error1", "error2"],
         )
         assert result.passed is False
@@ -26,7 +27,8 @@ class TestValidationResult:
 
     def test_to_dict(self) -> None:
         result = ValidationResult(
-            check_name="test", passed=True,
+            check_name="test",
+            passed=True,
             details={"key": "value"},
         )
         d = result.to_dict()

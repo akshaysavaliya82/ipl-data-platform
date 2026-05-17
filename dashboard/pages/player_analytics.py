@@ -95,9 +95,14 @@ def _render_bowling_analysis(df: pd.DataFrame, top_n: int) -> None:
     bowling_stats["overs"] = (bowling_stats["balls"] / 6).round(1)
     bowling_stats = bowling_stats.sort_values("wickets", ascending=False).head(top_n)
 
-    fig = px.bar(bowling_stats, x="bowler", y="wickets",
-                 title=f"Top {top_n} Wicket Takers",
-                 color="economy", color_continuous_scale="RdYlGn_r")
+    fig = px.bar(
+        bowling_stats,
+        x="bowler",
+        y="wickets",
+        title=f"Top {top_n} Wicket Takers",
+        color="economy",
+        color_continuous_scale="RdYlGn_r",
+    )
     fig.update_layout(template="plotly_dark", height=400, xaxis_tickangle=-45)
     st.plotly_chart(fig, use_container_width=True)
 
@@ -119,9 +124,13 @@ def _render_allround_analysis(df: pd.DataFrame, top_n: int) -> None:
     allround = allround.sort_values("runs", ascending=False).head(top_n)
 
     fig = px.scatter(
-        allround, x="runs", y="wickets", text="player",
+        allround,
+        x="runs",
+        y="wickets",
+        text="player",
         title="All-round Performance (Runs vs Wickets)",
-        size="runs", color="wickets",
+        size="runs",
+        color="wickets",
         color_continuous_scale="Viridis",
     )
     fig.update_traces(textposition="top center")
@@ -144,11 +153,8 @@ def _render_player_detail(df: pd.DataFrame, player: str) -> None:
         sr = player_batting["runs_scored"].sum() / max(len(player_batting), 1) * 100
         st.metric("Strike Rate", f"{sr:.2f}")
 
-    season_runs = (
-        player_batting.groupby("season")["runs_scored"].sum().reset_index()
-    )
+    season_runs = player_batting.groupby("season")["runs_scored"].sum().reset_index()
     if not season_runs.empty:
-        fig = px.bar(season_runs, x="season", y="runs_scored",
-                     title=f"{player} - Runs by Season")
+        fig = px.bar(season_runs, x="season", y="runs_scored", title=f"{player} - Runs by Season")
         fig.update_layout(template="plotly_dark", height=350)
         st.plotly_chart(fig, use_container_width=True)

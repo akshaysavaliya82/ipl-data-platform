@@ -47,17 +47,52 @@ VENUES = [
 ]
 
 PLAYER_NAMES = [
-    "Virat Kohli", "Rohit Sharma", "MS Dhoni", "AB de Villiers", "David Warner",
-    "Suresh Raina", "Chris Gayle", "Shikhar Dhawan", "KL Rahul", "Rishabh Pant",
-    "Faf du Plessis", "Jos Buttler", "Quinton de Kock", "Sanju Samson",
-    "Shreyas Iyer", "Ruturaj Gaikwad", "Suryakumar Yadav", "Hardik Pandya",
-    "Ravindra Jadeja", "Andre Russell", "Kieron Pollard", "Glenn Maxwell",
-    "Jasprit Bumrah", "Yuzvendra Chahal", "Rashid Khan", "Kagiso Rabada",
-    "Trent Boult", "Pat Cummins", "Mohammed Shami", "Bhuvneshwar Kumar",
-    "Amit Mishra", "Dwayne Bravo", "Lasith Malinga", "Sunil Narine",
-    "Ravichandran Ashwin", "Axar Patel", "Washington Sundar", "Kuldeep Yadav",
-    "Ishan Kishan", "Prithvi Shaw", "Devdutt Padikkal", "Shubman Gill",
-    "Tilak Varma", "Rinku Singh", "Yashasvi Jaiswal", "Matheesha Pathirana",
+    "Virat Kohli",
+    "Rohit Sharma",
+    "MS Dhoni",
+    "AB de Villiers",
+    "David Warner",
+    "Suresh Raina",
+    "Chris Gayle",
+    "Shikhar Dhawan",
+    "KL Rahul",
+    "Rishabh Pant",
+    "Faf du Plessis",
+    "Jos Buttler",
+    "Quinton de Kock",
+    "Sanju Samson",
+    "Shreyas Iyer",
+    "Ruturaj Gaikwad",
+    "Suryakumar Yadav",
+    "Hardik Pandya",
+    "Ravindra Jadeja",
+    "Andre Russell",
+    "Kieron Pollard",
+    "Glenn Maxwell",
+    "Jasprit Bumrah",
+    "Yuzvendra Chahal",
+    "Rashid Khan",
+    "Kagiso Rabada",
+    "Trent Boult",
+    "Pat Cummins",
+    "Mohammed Shami",
+    "Bhuvneshwar Kumar",
+    "Amit Mishra",
+    "Dwayne Bravo",
+    "Lasith Malinga",
+    "Sunil Narine",
+    "Ravichandran Ashwin",
+    "Axar Patel",
+    "Washington Sundar",
+    "Kuldeep Yadav",
+    "Ishan Kishan",
+    "Prithvi Shaw",
+    "Devdutt Padikkal",
+    "Shubman Gill",
+    "Tilak Varma",
+    "Rinku Singh",
+    "Yashasvi Jaiswal",
+    "Matheesha Pathirana",
 ]
 
 
@@ -66,18 +101,37 @@ def generate_players_dataset() -> list[dict[str, Any]]:
     players = []
     for i, name in enumerate(PLAYER_NAMES):
         player = {
-            "player_id": f"P{i+1:04d}",
+            "player_id": f"P{i + 1:04d}",
             "player_name": name,
-            "nationality": random.choice(["India", "Australia", "South Africa",
-                                           "England", "New Zealand", "West Indies",
-                                           "Sri Lanka", "Afghanistan", "Bangladesh"]),
-            "date_of_birth": (datetime(1985, 1, 1, tzinfo=UTC) +
-                              timedelta(days=random.randint(0, 5000))).strftime("%Y-%m-%d"),
+            "nationality": random.choice(
+                [
+                    "India",
+                    "Australia",
+                    "South Africa",
+                    "England",
+                    "New Zealand",
+                    "West Indies",
+                    "Sri Lanka",
+                    "Afghanistan",
+                    "Bangladesh",
+                ]
+            ),
+            "date_of_birth": (
+                datetime(1985, 1, 1, tzinfo=UTC) + timedelta(days=random.randint(0, 5000))
+            ).strftime("%Y-%m-%d"),
             "batting_style": random.choice(["Right-hand bat", "Left-hand bat"]),
-            "bowling_style": random.choice(["Right-arm fast", "Right-arm medium",
-                                             "Left-arm fast", "Left-arm orthodox",
-                                             "Right-arm leg-break", "Right-arm offbreak",
-                                             "Slow left-arm orthodox", "None"]),
+            "bowling_style": random.choice(
+                [
+                    "Right-arm fast",
+                    "Right-arm medium",
+                    "Left-arm fast",
+                    "Left-arm orthodox",
+                    "Right-arm leg-break",
+                    "Right-arm offbreak",
+                    "Slow left-arm orthodox",
+                    "None",
+                ]
+            ),
             "role": random.choice(["Batsman", "Bowler", "All-rounder", "Wicketkeeper"]),
             "ipl_debut_year": random.choice(SEASONS[:10]),
         }
@@ -98,8 +152,8 @@ def generate_matches_dataset(num_matches: int = 200) -> list[dict[str, Any]]:
         toss_winner = random.choice([team1, team2])
         toss_decision = random.choice(["bat", "field"])
 
-        first_batting = toss_winner if toss_decision == "bat" else (
-            team2 if toss_winner == team1 else team1
+        first_batting = (
+            toss_winner if toss_decision == "bat" else (team2 if toss_winner == team1 else team1)
         )
         second_batting = team2 if first_batting == team1 else team1
 
@@ -121,10 +175,9 @@ def generate_matches_dataset(num_matches: int = 200) -> list[dict[str, Any]]:
             margin = f"{i1_runs - i2_runs} runs"
             result_type = "runs"
 
-        match_date = datetime(season, random.randint(3, 5),
-                              random.randint(1, 28), tzinfo=UTC)
+        match_date = datetime(season, random.randint(3, 5), random.randint(1, 28), tzinfo=UTC)
         match = {
-            "match_id": f"M{i+1:05d}",
+            "match_id": f"M{i + 1:05d}",
             "season": season,
             "match_number": i + 1,
             "date": match_date.strftime("%Y-%m-%d"),
@@ -146,17 +199,20 @@ def generate_matches_dataset(num_matches: int = 200) -> list[dict[str, Any]]:
             "result_type": result_type,
             "margin": margin,
             "player_of_match": random.choice(PLAYER_NAMES),
-            "umpire1": random.choice(["Nitin Menon", "KN Ananthapadmanabhan",
-                                       "Anil Chaudhary", "Chris Gaffaney"]),
-            "umpire2": random.choice(["Virender Sharma", "Jayaraman Madanagopal",
-                                       "Michael Gough", "Rod Tucker"]),
+            "umpire1": random.choice(
+                ["Nitin Menon", "KN Ananthapadmanabhan", "Anil Chaudhary", "Chris Gaffaney"]
+            ),
+            "umpire2": random.choice(
+                ["Virender Sharma", "Jayaraman Madanagopal", "Michael Gough", "Rod Tucker"]
+            ),
         }
         matches.append(match)
     return matches
 
 
-def generate_ball_by_ball_dataset(matches: list[dict[str, Any]],
-                                   balls_per_match: int = 240) -> list[dict[str, Any]]:
+def generate_ball_by_ball_dataset(
+    matches: list[dict[str, Any]], balls_per_match: int = 240
+) -> list[dict[str, Any]]:
     """Generate ball-by-ball data for given matches."""
     all_balls = []
     for match in matches[:50]:  # Limit for sample data
@@ -181,9 +237,9 @@ def generate_ball_by_ball_dataset(matches: list[dict[str, Any]],
                     if innings == 2 and target and total_runs >= target:
                         break
 
-                    runs = random.choices(
-                        [0, 1, 2, 3, 4, 6], weights=[25, 30, 15, 5, 18, 7], k=1
-                    )[0]
+                    runs = random.choices([0, 1, 2, 3, 4, 6], weights=[25, 30, 15, 5, 18, 7], k=1)[
+                        0
+                    ]
                     is_wicket = random.random() < 0.04
                     is_boundary = runs in (4, 6) and not is_wicket
 
@@ -209,9 +265,9 @@ def generate_ball_by_ball_dataset(matches: list[dict[str, Any]],
                         "extras_type": "none",
                         "is_wicket": is_wicket,
                         "dismissal_type": (
-                            random.choice(["bowled", "caught", "lbw",
-                                           "run out", "stumped"])
-                            if is_wicket else "none"
+                            random.choice(["bowled", "caught", "lbw", "run out", "stumped"])
+                            if is_wicket
+                            else "none"
                         ),
                         "is_boundary": is_boundary,
                         "is_six": runs == 6 and is_boundary,
@@ -265,7 +321,7 @@ def save_sample_data(output_dir: str = "data/samples") -> dict[str, str]:
     teams = list({m["team1"] for m in matches} | {m["team2"] for m in matches})
     teams_data = [
         {
-            "team_id": f"T{i+1:03d}",
+            "team_id": f"T{i + 1:03d}",
             "team_name": team,
             "home_venue": random.choice(VENUES)["name"],
             "home_city": random.choice(VENUES)["city"],
@@ -280,8 +336,12 @@ def save_sample_data(output_dir: str = "data/samples") -> dict[str, str]:
     files["teams"] = str(teams_file)
 
     venues_data = [
-        {**v, "venue_id": f"V{i+1:03d}", "country": "India",
-         "capacity": random.randint(25000, 130000)}
+        {
+            **v,
+            "venue_id": f"V{i + 1:03d}",
+            "country": "India",
+            "capacity": random.randint(25000, 130000),
+        }
         for i, v in enumerate(VENUES)
     ]
     venues_file = output_path / "venues.json"
@@ -289,9 +349,13 @@ def save_sample_data(output_dir: str = "data/samples") -> dict[str, str]:
         json.dump(venues_data, f, indent=2)
     files["venues"] = str(venues_file)
 
-    logger.info("sample_data_saved", files=list(files.keys()),
-                 player_count=len(players), match_count=len(matches),
-                 ball_count=len(balls))
+    logger.info(
+        "sample_data_saved",
+        files=list(files.keys()),
+        player_count=len(players),
+        match_count=len(matches),
+        ball_count=len(balls),
+    )
     return files
 
 

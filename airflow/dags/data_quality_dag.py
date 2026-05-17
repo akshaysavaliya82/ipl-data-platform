@@ -58,18 +58,24 @@ def run_freshness_checks(**context):
 def evaluate_results(**context):
     """Evaluate all data quality results."""
     ti = context["ti"]
-    null_results = ti.xcom_pull(task_ids="quality_checks.run_null_checks",
-                                 key="null_check_results") or {}
-    dup_results = ti.xcom_pull(task_ids="quality_checks.run_duplicate_checks",
-                                key="duplicate_check_results") or {}
-    schema_results = ti.xcom_pull(task_ids="quality_checks.run_schema_checks",
-                                   key="schema_check_results") or {}
-    freshness_results = ti.xcom_pull(task_ids="quality_checks.run_freshness_checks",
-                                      key="freshness_check_results") or {}
+    null_results = (
+        ti.xcom_pull(task_ids="quality_checks.run_null_checks", key="null_check_results") or {}
+    )
+    dup_results = (
+        ti.xcom_pull(task_ids="quality_checks.run_duplicate_checks", key="duplicate_check_results")
+        or {}
+    )
+    schema_results = (
+        ti.xcom_pull(task_ids="quality_checks.run_schema_checks", key="schema_check_results") or {}
+    )
+    freshness_results = (
+        ti.xcom_pull(task_ids="quality_checks.run_freshness_checks", key="freshness_check_results")
+        or {}
+    )
 
     all_passed = all(
-        r.get("passed", True) for r in
-        [null_results, dup_results, schema_results, freshness_results]
+        r.get("passed", True)
+        for r in [null_results, dup_results, schema_results, freshness_results]
     )
 
     if not all_passed:
@@ -95,7 +101,6 @@ with DAG(
     4. Data freshness checks
     """,
 ) as dag:
-
     start = BashOperator(
         task_id="start_dq_checks",
         bash_command='echo "Starting Data Quality Checks - $(date)"',

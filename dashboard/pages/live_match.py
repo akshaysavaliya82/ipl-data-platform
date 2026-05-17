@@ -32,8 +32,11 @@ def _show_demo_state() -> None:
     """Show a demo match state."""
     render_live_match_kpis(
         batting_team="Mumbai Indians",
-        score=156, wickets=4, overs=16.3,
-        run_rate=9.45, target=185,
+        score=156,
+        wickets=4,
+        overs=16.3,
+        run_rate=9.45,
+        target=185,
     )
 
     st.markdown("---")
@@ -54,32 +57,71 @@ def _show_demo_state() -> None:
 
     st.subheader("Ball-by-Ball Commentary")
     commentary = [
-        {"Over": "16.3", "Batsman": "Suryakumar Yadav", "Bowler": "Pathirana",
-         "Result": "4 runs", "Score": "156/4"},
-        {"Over": "16.2", "Batsman": "Suryakumar Yadav", "Bowler": "Pathirana",
-         "Result": "1 run", "Score": "152/4"},
-        {"Over": "16.1", "Batsman": "Hardik Pandya", "Bowler": "Pathirana",
-         "Result": "6 runs!", "Score": "151/4"},
-        {"Over": "15.6", "Batsman": "Hardik Pandya", "Bowler": "Jadeja",
-         "Result": "2 runs", "Score": "145/4"},
-        {"Over": "15.5", "Batsman": "Hardik Pandya", "Bowler": "Jadeja",
-         "Result": "DOT", "Score": "143/4"},
+        {
+            "Over": "16.3",
+            "Batsman": "Suryakumar Yadav",
+            "Bowler": "Pathirana",
+            "Result": "4 runs",
+            "Score": "156/4",
+        },
+        {
+            "Over": "16.2",
+            "Batsman": "Suryakumar Yadav",
+            "Bowler": "Pathirana",
+            "Result": "1 run",
+            "Score": "152/4",
+        },
+        {
+            "Over": "16.1",
+            "Batsman": "Hardik Pandya",
+            "Bowler": "Pathirana",
+            "Result": "6 runs!",
+            "Score": "151/4",
+        },
+        {
+            "Over": "15.6",
+            "Batsman": "Hardik Pandya",
+            "Bowler": "Jadeja",
+            "Result": "2 runs",
+            "Score": "145/4",
+        },
+        {
+            "Over": "15.5",
+            "Batsman": "Hardik Pandya",
+            "Bowler": "Jadeja",
+            "Result": "DOT",
+            "Score": "143/4",
+        },
     ]
     st.table(commentary)
 
     st.subheader("Run Rate Progression")
     overs = list(range(1, 17))
-    run_rates = [6.0, 6.5, 7.2, 7.8, 8.1, 8.5, 8.2, 8.8, 9.0, 8.7,
-                 9.1, 9.3, 9.5, 9.2, 9.4, 9.45]
+    run_rates = [6.0, 6.5, 7.2, 7.8, 8.1, 8.5, 8.2, 8.8, 9.0, 8.7, 9.1, 9.3, 9.5, 9.2, 9.4, 9.45]
     required = [9.25] * 16
 
     fig = go.Figure()
-    fig.add_trace(go.Scatter(x=overs, y=run_rates, mode="lines+markers",
-                              name="Current RR", line={"color": "#1E88E5"}))
-    fig.add_trace(go.Scatter(x=overs, y=required, mode="lines",
-                              name="Required RR", line={"color": "red", "dash": "dash"}))
-    fig.update_layout(title="Run Rate Progression", template="plotly_dark",
-                      height=350, xaxis_title="Overs", yaxis_title="Run Rate")
+    fig.add_trace(
+        go.Scatter(
+            x=overs, y=run_rates, mode="lines+markers", name="Current RR", line={"color": "#1E88E5"}
+        )
+    )
+    fig.add_trace(
+        go.Scatter(
+            x=overs,
+            y=required,
+            mode="lines",
+            name="Required RR",
+            line={"color": "red", "dash": "dash"},
+        )
+    )
+    fig.update_layout(
+        title="Run Rate Progression",
+        template="plotly_dark",
+        height=350,
+        xaxis_title="Overs",
+        yaxis_title="Run Rate",
+    )
     st.plotly_chart(fig, use_container_width=True)
 
 

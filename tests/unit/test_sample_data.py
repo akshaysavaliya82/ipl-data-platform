@@ -63,8 +63,12 @@ class TestPlayerData:
         players = generate_players_dataset()
         player = players[0]
         expected_fields = [
-            "player_id", "player_name", "nationality",
-            "batting_style", "bowling_style", "role",
+            "player_id",
+            "player_name",
+            "nationality",
+            "batting_style",
+            "bowling_style",
+            "role",
             "ipl_debut_year",
         ]
         for field in expected_fields:

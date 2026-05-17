@@ -11,9 +11,15 @@ from monitoring.logger import get_logger
 logger = get_logger(__name__)
 
 IPL_TEAMS = [
-    "Mumbai Indians", "Chennai Super Kings", "Royal Challengers Bangalore",
-    "Kolkata Knight Riders", "Delhi Capitals", "Rajasthan Royals",
-    "Sunrisers Hyderabad", "Punjab Kings", "Gujarat Titans",
+    "Mumbai Indians",
+    "Chennai Super Kings",
+    "Royal Challengers Bangalore",
+    "Kolkata Knight Riders",
+    "Delhi Capitals",
+    "Rajasthan Royals",
+    "Sunrisers Hyderabad",
+    "Punjab Kings",
+    "Gujarat Titans",
     "Lucknow Super Giants",
 ]
 
@@ -29,6 +35,7 @@ IPL_VENUES = [
     {"name": "Narendra Modi Stadium", "city": "Ahmedabad", "capacity": 132000},
     {"name": "BRSABV Ekana Stadium", "city": "Lucknow", "capacity": 50000},
 ]
+
 
 def _player(name: str, role: str, bat: str, bowl: str) -> dict[str, Any]:
     return {"name": name, "role": role, "batting_style": bat, "bowling_style": bowl}
@@ -73,8 +80,12 @@ def _generate_playing_xi(team: str) -> list[dict[str, Any]]:
     if team in PLAYER_POOL:
         return PLAYER_POOL[team][:11]
     return [
-        {"name": f"Player {i+1}", "role": "batsman" if i < 6 else "bowler",
-         "batting_style": "right", "bowling_style": "right-arm medium"}
+        {
+            "name": f"Player {i + 1}",
+            "role": "batsman" if i < 6 else "bowler",
+            "batting_style": "right",
+            "bowling_style": "right-arm medium",
+        }
         for i in range(11)
     ]
 
@@ -104,17 +115,17 @@ class MatchSimulator:
         self.current_batsman_idx = 0
         self.non_striker_idx = 1
         self.events: list[dict[str, Any]] = []
-        logger.info("match_initialized", match_id=self.match_id,
-                     teams=f"{self.team_batting} vs {self.team_bowling}")
+        logger.info(
+            "match_initialized",
+            match_id=self.match_id,
+            teams=f"{self.team_batting} vs {self.team_bowling}",
+        )
 
     def _get_current_batsman(self) -> dict[str, Any]:
         return self.batting_xi[min(self.current_batsman_idx, len(self.batting_xi) - 1)]
 
     def _get_current_bowler(self) -> dict[str, Any]:
-        bowlers = [
-            p for p in self.bowling_xi
-            if p["role"] in ("bowler", "allrounder")
-        ]
+        bowlers = [p for p in self.bowling_xi if p["role"] in ("bowler", "allrounder")]
         bowler_idx = self.over % len(bowlers) if bowlers else 0
         if not bowlers:
             bowlers = self.bowling_xi[-4:]
@@ -174,30 +185,23 @@ class MatchSimulator:
             self.total_runs += runs
             if runs % 2 == 1:
                 self.current_batsman_idx, self.non_striker_idx = (
-                    self.non_striker_idx, self.current_batsman_idx
+                    self.non_striker_idx,
+                    self.current_batsman_idx,
                 )
 
         event["total_runs"] = self.total_runs
         event["total_wickets"] = self.wickets
-        event["run_rate"] = round(
-            self.total_runs / max((self.over * 6 + self.ball) / 6, 0.1), 2
-        )
+        event["run_rate"] = round(self.total_runs / max((self.over * 6 + self.ball) / 6, 0.1), 2)
         event["is_powerplay"] = self.over < 6
         event["is_death_overs"] = self.over >= 16
-        event["phase"] = (
-            "powerplay" if self.over < 6
-            else "middle" if self.over < 16
-            else "death"
-        )
+        event["phase"] = "powerplay" if self.over < 6 else "middle" if self.over < 16 else "death"
 
         if self.target is not None:
             event["target"] = self.target
             event["runs_needed"] = max(0, self.target - self.total_runs)
             balls_remaining = max(0, (20 * 6) - (self.over * 6 + self.ball))
             event["balls_remaining"] = balls_remaining
-            event["required_rate"] = round(
-                event["runs_needed"] / max(balls_remaining / 6, 0.1), 2
-            )
+            event["required_rate"] = round(event["runs_needed"] / max(balls_remaining / 6, 0.1), 2)
 
         if is_legal:
             self.ball += 1
@@ -205,7 +209,8 @@ class MatchSimulator:
                 self.over += 1
                 self.ball = 0
                 self.current_batsman_idx, self.non_striker_idx = (
-                    self.non_striker_idx, self.current_batsman_idx
+                    self.non_striker_idx,
+                    self.current_batsman_idx,
                 )
 
         event["match_state"] = self._get_match_state()
@@ -229,8 +234,7 @@ class MatchSimulator:
         self.match_state = "in_progress"
         all_events: list[dict[str, Any]] = []
 
-        logger.info("innings_started", match_id=self.match_id, innings=1,
-                     batting=self.team_batting)
+        logger.info("innings_started", match_id=self.match_id, innings=1, batting=self.team_batting)
         while self.over < 20 and self.wickets < 10:
             event = self._simulate_ball()
             all_events.append(event)
@@ -252,8 +256,13 @@ class MatchSimulator:
         self.team_batting, self.team_bowling = self.team_bowling, self.team_batting
         self.batting_xi, self.bowling_xi = self.bowling_xi, self.batting_xi
 
-        logger.info("innings_started", match_id=self.match_id, innings=2,
-                     batting=self.team_batting, target=self.target)
+        logger.info(
+            "innings_started",
+            match_id=self.match_id,
+            innings=2,
+            batting=self.team_batting,
+            target=self.target,
+        )
         while self.over < 20 and self.wickets < 10:
             event = self._simulate_ball()
             all_events.append(event)
@@ -262,8 +271,7 @@ class MatchSimulator:
             time.sleep(delay / self.speed)
 
         self.match_state = "completed"
-        logger.info("match_completed", match_id=self.match_id,
-                     total_events=len(all_events))
+        logger.info("match_completed", match_id=self.match_id, total_events=len(all_events))
         return all_events
 
     def generate_match_summary(self) -> dict[str, Any]:
@@ -299,14 +307,12 @@ class MatchSimulator:
             "winner": winner,
             "margin": margin,
             "total_balls": len([e for e in self.events if e.get("is_legal", True)]),
-            "total_fours": len([
-                e for e in self.events
-                if e.get("runs_scored") == 4 and not e.get("extras_type")
-            ]),
-            "total_sixes": len([
-                e for e in self.events
-                if e.get("runs_scored") == 6 and not e.get("extras_type")
-            ]),
+            "total_fours": len(
+                [e for e in self.events if e.get("runs_scored") == 4 and not e.get("extras_type")]
+            ),
+            "total_sixes": len(
+                [e for e in self.events if e.get("runs_scored") == 6 and not e.get("extras_type")]
+            ),
         }
 
 

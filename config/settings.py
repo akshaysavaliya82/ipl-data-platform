@@ -50,8 +50,14 @@ class DataPathSettings(BaseSettings):
     model_config = {"env_prefix": "DATA_"}
 
     def ensure_paths(self) -> None:
-        for attr in ["lake_path", "warehouse_path", "raw_data_path",
-                      "bronze_path", "silver_path", "gold_path"]:
+        for attr in [
+            "lake_path",
+            "warehouse_path",
+            "raw_data_path",
+            "bronze_path",
+            "silver_path",
+            "gold_path",
+        ]:
             Path(getattr(self, attr)).mkdir(parents=True, exist_ok=True)
 
 

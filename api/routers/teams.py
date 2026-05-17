@@ -32,9 +32,6 @@ async def team_rankings(
     """Get team rankings by win percentage."""
     stats = get_team_stats()
     return {
-        "rankings": [
-            {"rank": i + 1, **team}
-            for i, team in enumerate(stats)
-        ],
+        "rankings": [{"rank": i + 1, **team} for i, team in enumerate(stats)],
         "season": season or "all-time",
     }

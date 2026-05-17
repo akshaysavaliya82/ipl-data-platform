@@ -19,6 +19,7 @@ async def lifespan(app: FastAPI):
     """Application lifespan events."""
     logger.info("api_starting", version="1.0.0")
     from ingestion.sources.sample_data import save_sample_data
+
     save_sample_data("data/samples")
     yield
     logger.info("api_shutting_down")
