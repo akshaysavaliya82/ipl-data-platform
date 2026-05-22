@@ -1,0 +1,43 @@
+version: 2
+
+models:
+  - name: dim_player
+    description: Player dimension table with career statistics
+    columns:
+      - name: player_id
+        description: Unique player identifier
+        tests:
+          - not_null
+          - unique
+      - name: player_name
+        tests:
+          - not_null
+
+  - name: dim_team
+    description: Team dimension table with aggregate stats
+    columns:
+      - name: team_id
+        tests:
+          - not_null
+      - name: team_name
+        tests:
+          - not_null
+          - unique
+
+  - name: dim_venue
+    description: Venue dimension with match statistics
+    columns:
+      - name: venue_id
+        tests:
+          - not_null
+      - name: venue_name
+        tests:
+          - not_null
+
+  - name: dim_match
+    description: Match dimension with detailed match info
+    columns:
+      - name: match_id
+        tests:
+          - not_null
+          - unique

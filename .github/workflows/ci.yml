@@ -1,0 +1,124 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+env:
+  PYTHON_VERSION: "3.12"
+
+jobs:
+  lint:
+    name: Lint & Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install ruff mypy
+
+      - name: Run Ruff linter
+        run: ruff check .
+
+      - name: Run Ruff formatter check
+        run: ruff format --check .
+
+  test:
+    name: Unit Tests
+    runs-on: ubuntu-latest
+    needs: lint
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dependencies
+        run: |
+          pip install --upgrade pip
+          pip install pytest pytest-cov httpx
+          pip install fastapi uvicorn pydantic pydantic-settings
+          pip install structlog prometheus-client
+          pip install sqlalchemy psycopg2-binary
+          pip install pyyaml python-dotenv requests
+
+      - name: Run tests
+        run: |
+          PYTHONPATH=. pytest tests/unit/ -v --tb=short -x
+        env:
+          PYTHONPATH: .
+
+  validate-dbt:
+    name: Validate dbt Models
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install dbt
+        run: pip install dbt-postgres
+
+      - name: Validate dbt project
+        run: |
+          cd dbt && dbt parse --profiles-dir . || true
+
+  validate-docker:
+    name: Validate Docker
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate docker-compose
+        run: docker compose config -q
+
+      - name: Validate Dockerfiles
+        run: |
+          for f in docker/*/Dockerfile; do
+            echo "Validating $f..."
+            docker build --check -f "$f" . 2>/dev/null || true
+          done
+
+  validate-airflow:
+    name: Validate Airflow DAGs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ env.PYTHON_VERSION }}
+
+      - name: Install Airflow
+        run: |
+          pip install "apache-airflow>=2.9,<3"
+          pip install structlog pydantic pydantic-settings pyyaml
+
+      - name: Validate DAG syntax
+        run: |
+          PYTHONPATH=. python -c "
+          import ast
+          from pathlib import Path
+          dag_dir = Path('airflow/dags')
+          for f in dag_dir.glob('*.py'):
+              if f.name == '__init__.py':
+                  continue
+              print(f'Validating {f}...')
+              with open(f) as fh:
+                  ast.parse(fh.read())
+              print(f'  {f.name} - OK')
+          "

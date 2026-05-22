@@ -1,0 +1,70 @@
+version: 2
+
+sources:
+  - name: raw
+    description: Raw IPL data loaded into PostgreSQL
+    schema: public
+    tables:
+      - name: matches
+        description: Raw match data
+        columns:
+          - name: match_id
+            description: Unique match identifier
+            tests:
+              - not_null
+              - unique
+      - name: ball_events
+        description: Ball-by-ball event data
+        columns:
+          - name: ball_id
+            description: Unique ball event identifier
+            tests:
+              - not_null
+      - name: players
+        description: Player master data
+        columns:
+          - name: player_id
+            description: Unique player identifier
+            tests:
+              - not_null
+              - unique
+      - name: teams
+        description: Team master data
+      - name: venues
+        description: Venue master data
+
+models:
+  - name: stg_matches
+    description: Staged and cleaned match data
+    columns:
+      - name: match_id
+        tests:
+          - not_null
+          - unique
+      - name: season
+        tests:
+          - not_null
+      - name: winner
+        tests:
+          - not_null
+
+  - name: stg_ball_events
+    description: Staged ball-by-ball events
+    columns:
+      - name: ball_id
+        tests:
+          - not_null
+      - name: match_id
+        tests:
+          - not_null
+      - name: runs_scored
+        tests:
+          - not_null
+
+  - name: stg_players
+    description: Staged player data
+    columns:
+      - name: player_id
+        tests:
+          - not_null
+          - unique
